@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 # Create your views here.
-
-
 # This will return the literal text "Howdy!" to the browser.
+
+
 def hello(request):
     # pull data from database
     # transform data
@@ -14,6 +14,7 @@ def hello(request):
 
 # This will return a template
 def wakeup(request):
+
     return render(request, 'wakeup.html')
 
 
