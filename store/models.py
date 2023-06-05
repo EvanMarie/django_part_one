@@ -41,7 +41,7 @@ class Customer(models.Model):
         (MEMBERSHIP_SILVER, 'Silver'),
         (MEMBERSHIP_GOLD, 'Gold'),
     ]
-    first_name = models.CharField(max_length=255)
+    given_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -54,7 +54,7 @@ class Customer(models.Model):
         # creating indexes for last_name and first_name.
         # Indexes are used to speed up queries
         indexes = [
-            models.Index(fields=['last_name', 'first_name']),
+            models.Index(fields=['last_name', 'given_name']),
         ]
 
 
