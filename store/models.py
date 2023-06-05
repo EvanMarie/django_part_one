@@ -1,26 +1,32 @@
 from django.db import models
 
 
-# Product to Promotion: a promotion can have multiple products, 
+# Product to Promotion: a promotion can apply to multiple products,
 # and a product can have multiple promotions
 class Promotion(models.Model):
-    
+    description = models.CharField(max_length=255)
+    discount = models.FloatField()
+    # all the products this promotion applies to
 
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
+    featured_product = models.ForeignKey(
+        "Product", on_delete=models.SET_NULL, null=True, related_name='+')
 
 
 class Product(models.Model):
     # This makes the sku the primary key/unique id and Django will not create an id field
     # sku = models.CharField(max_length=10, primary_key=True)
     title = models.CharField(max_length=255)
+    slug = models.SlugField()
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     # if a collection is deleted, PROTECT will prevent the deletion of the products within
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    promotions = models.ManyToManyField(Promotion)
 
 
 class Customer(models.Model):
@@ -43,6 +49,13 @@ class Customer(models.Model):
     # Choice field - https://docs.djangoproject.com/en/3.2/ref/models/fields/#choices
     membership = models.CharField(
         max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
+
+    class Meta:
+        # creating indexes for last_name and first_name.
+        # Indexes are used to speed up queries
+        indexes = [
+            models.Index(fields=['last_name', 'first_name']),
+        ]
 
 
 class Order(models.Model):
@@ -79,6 +92,7 @@ class OrderItem(models.Model):
 class Address(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
+    zip = models.CharField(max_length=10, default='00000')
     # if the customer to address is one-to-one, i.e. they can have one address
     # customer = models.OneToOneField(
     #     Customer, on_delete=models.CASCADE, primary_key=True)
